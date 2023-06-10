@@ -66,3 +66,10 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/de
 ### `npm run build` fails to minify
 
 This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+
+## Firebase ##
+
+### `firebase deploy`
+
+Run this to deploy the web app, config, and edge functions
+It will deployt the /build folder, so make sure to build before you run if you want to update the web app ie `npm run build`
