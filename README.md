@@ -1,3 +1,41 @@
+# Indiestack
+
+The boilerplate project for indie makers. Built with React (frontend), ChakraUI (UI), Firebase (BaaS) and Lemonsqueezy (payments).
+
+## Quickstart
+
+The point of this whole project is to get to market as fast as possible. This guide will get you from here to deployed web app with auth, payments, and beautiful UI in under 10 minutes.
+
+[WIP]
+
+## Scripts
+
+### `npm install`
+
+Installs the necessary packages for everything
+
+### `npm start`
+
+Runs the local development server with hotreload
+
+### `npm run build`
+
+Builds the frontend to the /build folder which is used for upload the firebase hosting
+
+### `npm deploy`
+
+Deploys the entire app to firebase. Run `npm run build` first for most cases. Includes the frontend build in /build, Cloud (serverside) functions in /functions, and any configuration updates made in firebase config files.
+
+### `npm deploy:client`
+
+Deploys only the client to firebase hosting. Run `npm run build` first for most cases. Uploads the frontend build in /build to firebase hosting
+
+### `npm deploy:server`
+
+Deploys only the server to firebase cloud functions. When developing locally, you must deploy your cloud functions if you aren't using the firebase emulator
+
+## Create React App
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
