@@ -3,6 +3,7 @@ import { initializeApp } from "firebase/app";
 import * as fbauth from "firebase/auth";
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { getFirestore } from "firebase/firestore"
+import { getFunctions, httpsCallable} from "firebase/functions";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -21,6 +22,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 export const db = getFirestore(app);
+export const functions = getFunctions(app);
 
 // Initialize Firebase Authentication and get a reference to the service
 export const auth = fbauth.getAuth(app);
@@ -35,5 +37,5 @@ export const signInWithEmailAndPassword = (email, password) => fbauth.signInWith
 export const createUserWithEmailAndPassword = (email, password) => fbauth.createUserWithEmailAndPassword(auth, email, password);
 export const signOut = () => fbauth.signOut(auth);
 
-
+export const helloWorld = httpsCallable(functions, 'helloWorld');
 export default app;

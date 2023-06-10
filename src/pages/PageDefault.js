@@ -10,18 +10,20 @@ import {
 } from '@chakra-ui/react';
 import { ColorModeSwitcher } from '../components/ColorModeSwitcher';
 import { Logo } from '../components/ChakraLogo';
-import { signOut, db } from '../firebase';
+import { signOut, db, helloWorld } from '../firebase';
 import {collection, addDoc, Timestamp} from 'firebase/firestore'
 
 function PageDefault() {
   const [hitdata, setHitdata] = useState(0)
   const spamServer = async () => {
-    await addDoc(collection(db, 'tasks'), {
-      title: "test",
-      description: "desd",
-      completed: false,
-      created: Timestamp.now()
-    })
+    const resp = await helloWorld();
+    console.log(resp)
+    // await addDoc(collection(db, 'tasks'), {
+    //   title: "test",
+    //   description: "desd",
+    //   completed: false,
+    //   created: Timestamp.now()
+    // })
   }
 
   return (
