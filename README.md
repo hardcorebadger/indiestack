@@ -20,7 +20,7 @@ Runs the local development server with hotreload
 
 ### `npm run build`
 
-Builds the frontend to the /build folder which is used for upload the firebase hosting
+Builds the frontend to the /build folder which is used for upload to firebase hosting
 
 ### `npm deploy`
 

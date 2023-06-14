@@ -1,4 +1,4 @@
-import React from 'react';
+import {useState} from 'react';
 import {
   Text,
   Heading,
@@ -12,8 +12,9 @@ import {
   SimpleGrid,
   Card,
   Circle,
-  useColorModeValue,
-  Avatar
+  Input,
+  Avatar,
+  Link
 } from '@chakra-ui/react';
 import { LockIcon } from '@chakra-ui/icon'
 import Logo from '../components/Logo';
@@ -21,28 +22,41 @@ import screenies from '../resources/screenies.png';
 import TechnologyLogo from '../components/TechnologyLogo';
 import Iconify from '../components/Iconify';
 import { signOut, db } from '../firebase';
-import {collection, addDoc, Timestamp} from 'firebase/firestore'
+import {doc, setDoc, Timestamp} from 'firebase/firestore'
 function PageDefault() {
-  const spamServer = async () => {
-    await addDoc(collection(db, 'tasks'), {
-      title: "test",
-      description: "desd",
-      completed: false,
-      created: Timestamp.now()
+  const [email, setEmail] = useState("")
+  const [optInState, setOptInState] = useState(0)
+  const emailOptIn = async () => {
+    setOptInState(1)
+    await setDoc(doc(db, 'optins', email), {
+      email: email,
+      subscribed: Timestamp.now()
     })
+    setOptInState(2)
   }
   return (
     <Box>
       {/* Hero */}
-      <Container maxW='700' textAlign='center' pt='75' pb='75'>
+      <Container maxW='700' textAlign='center' pt='55' pb='55'>
         <VStack align='center' spacing={10}>
           <Logo/>
-          <Heading size='4xl'>The best bootstrap for <chakra.span color='primary.500'>indie hackers</chakra.span></Heading>
-          <Text color="text.subtle" pl='100' pr='100' fontSize='lg' >Small clean code base. Simple stack with old-faithful frameworks react and php. All the things you need to launch and make that money.</Text>
-          <HStack>
-            <Button size='lg' colorScheme='primary' onClick={spamServer}>Start Hacking</Button>
-            <Button size='lg' colorScheme='gray'>Live Demo</Button>
+          <Heading size='4xl'>The MVP toolkit for <chakra.span color='primary.500'>indie hackers</chakra.span></Heading>
+          <Container maxW="500" >
+          <VStack align='center' spacing={10}>
+          <Text color="text.subtle"  fontSize='lg' >Ship better MVPs 10x faster. Deploy a ready to launch app with Auth, Payments, Landing page and more in under 10 minutes. No fluff, just speed.</Text>
+          <VStack align='center' spacing={5}>
+          <HStack w="100%">
+            <Input size='lg' placeholder='Your email' type='email' value={email} onChange={(e)=>setEmail(e.target.value)}/>
+            <Button pl='10' pr='10' size='lg' colorScheme='primary' 
+            onClick={emailOptIn} isLoading={optInState===1} loadingText="Get notified"
+            leftIcon={optInState < 2 ? null : <Iconify icon='material-symbols:check'/>}
+            >{optInState < 2 ? "Get notified" : "Thanks!"}</Button>
           </HStack>
+          <Text color="text.subtle"  fontSize='sm' >Work in progress 🚧 Follow the journey <Link color='primary.500' href="https://twitter.com/jaketref">@jaketref</Link></Text>
+
+          </VStack>
+          </VStack>
+          </Container>
         </VStack>
       </Container>
       {/* Screenshots */}
@@ -50,24 +64,20 @@ function PageDefault() {
         <Image src={screenies}/>
       </Container>
       {/* Technologies */}
-      <Container maxW={700} textAlign='center' pt='20' pb='40'>
-        <VStack align='center' spacing={20}>
+      <Container maxW={700} textAlign='center' pt='20' pb='75'>
+        <VStack align='center' spacing={20} w="100%">
           <VStack spacing={5}>
             <Heading size='lg'>A stack everyone understands</Heading>
             <Text fontSize='lg' color="text.subtle">Built with a “keep it simple stupid” philosophy focused solely on getting v1 into market as quickly as possible.</Text>
           </VStack>
-          <VStack spacing={10}>
-            <HStack spacing={100}>
+          <SimpleGrid w="100%" templateColumns={['repeat(2, 1fr)', 'repeat(3, 1fr)']} templateRows={['repeat(3, 1fr)', 'repeat(2, 1fr)']} gap={10}>
               <TechnologyLogo name='react' size={155}/>
               <TechnologyLogo name='chakra' size={155}/>
-              <TechnologyLogo name='laravel' size={155}/>
-            </HStack>
-            <HStack spacing={100}>
+              <TechnologyLogo name='firebase' size={155}/>
               <TechnologyLogo name='jwt' size={155}/>
-              <TechnologyLogo name='stripe' size={155}/>
+              <TechnologyLogo name='lemonsqueezy' size={155}/>
               <TechnologyLogo name='sendgrid' size={155}/>
-            </HStack>
-          </VStack>
+          </SimpleGrid>
         </VStack>
       </Container>
       {/* Features */}
@@ -75,18 +85,18 @@ function PageDefault() {
         <Container maxW={900} textAlign='center' pt='100'>
           <VStack align='center' spacing={8}>
             <Heading size='3xl'>Everything you need, without the bells and whistles ⚡️</Heading>
-            <Text color="text.subtle" pl='100' pr='100' fontSize='lg' >Opinionated solutions for all the common needs focused on delivering what actually works instead of 100s of complicated options</Text>
+            <Container maxW="500" ><Text color="text.subtle" fontSize='lg' >Opinionated solutions for all the common needs focused on delivering what actually works instead of 100s of complicated options</Text></Container>
           </VStack>
         </Container>
         <Container maxW={1200} pt='100' pb='100'>
-          <SimpleGrid columns={3} rows={2} spacing={10}>
+          <SimpleGrid columns={3} rows={2} spacing={10} minChildWidth='320px'>
             <Card p='30'>
               <VStack align='left' spacing={5}>
                 <Circle size='50px' bgColor='primary.600'>
                   <Iconify icon='material-symbols:lock' color='white' size={20}/>
                 </Circle>
                 <Text fontSize='lg' fontWeight='bold'>Authentication</Text>
-                <Text fontSize='lg' color="text.subtle">Simple, standard JWT bearer token authentication with support for email/password as well as google oAuth.</Text>
+                <Text fontSize='lg' color="text.subtle">Onboard users quickly. Firebase authentication with support for email/password as well as google, github etc.</Text>
               </VStack>
             </Card>
             <Card p='30'>
@@ -94,8 +104,8 @@ function PageDefault() {
                 <Circle size='50px' bgColor='primary.600'>
                   <Iconify icon='mdi:users' color='white' size={20}/>
                 </Circle>
-                <Text fontSize='lg' fontWeight='bold'>Users, Roles and Orgs</Text>
-                <Text fontSize='lg' color="text.subtle">User settings management. Optional organizations with user-to-user invite flows and role-level auth.</Text>
+                <Text fontSize='lg' fontWeight='bold'>User management</Text>
+                <Text fontSize='lg' color="text.subtle">Avoid spending time on settings pages with out of the box user profiles. Change/forgot password, update email, details, and more.</Text>
               </VStack>
             </Card>
             <Card p='30'>
@@ -104,7 +114,7 @@ function PageDefault() {
                   <Iconify icon='mdi:credit-card-outline' color='white' size={20}/>
                 </Circle>
                 <Text fontSize='lg' fontWeight='bold'>Payments</Text>
-                <Text fontSize='lg' color="text.subtle">Process payments with Stripe. Support for one-time purchases, multi-product purchases, and subscription tiers.</Text>
+                <Text fontSize='lg' color="text.subtle">Process one time or tiered subscription payments with Lemonsqueezy. High converting checkout + apple pay and taxes.</Text>
               </VStack>
             </Card>
             <Card p='30'>
@@ -121,8 +131,8 @@ function PageDefault() {
                 <Circle size='50px' bgColor='primary.600'>
                   <Iconify icon='material-symbols:code' color='white' size={20}/>
                 </Circle>
-                <Text fontSize='lg' fontWeight='bold'>Simple Backend</Text>
-                <Text fontSize='lg' color="text.subtle">Laravel skeleton backend set up with API routes, route level auth middleware, and configurable storage defaulted to sqLite.</Text>
+                <Text fontSize='lg' fontWeight='bold'>Serverless backend</Text>
+                <Text fontSize='lg' color="text.subtle">Spend less time on DB schemas, SSL and server configuration with a Firebase serverless backend. Deploy fullstack in 1 proejct.</Text>
               </VStack>
             </Card>
             <Card p='30'>
@@ -137,182 +147,27 @@ function PageDefault() {
           </SimpleGrid>
         </Container>
       </Box>
-      {/* Pricing */}
-      <Box backgroundColor='primary.mode.400'>
-        <Container maxW='700' textAlign='center' pt='100' pb='100'>
+     {/* CTA */}
+     <Container maxW='700' textAlign='center' pt='100' pb='100'>
+        <VStack align='center' spacing={10}>
+          <Heading size='3xl'>Follow the journey 🚧</Heading>
+          <Container maxW="500" >
+          <VStack align='center' spacing={10}>
+          <Text color="text.subtle"  fontSize='lg' >Indiestack is currently a work in progress. Enter your info to get notified when we launch</Text>
           <VStack align='center' spacing={5}>
-            <Heading size='3xl' color='white'>Wallet friendly pricing</Heading>
-            <Text color='gray.100' size='lg'>Your goal is to make money not spend it. You don’t need all the bells and whistles that make up a $1000 boilerplate anyway. Pay for what you need.</Text>
+          <HStack w="100%">
+          <Input size='lg' placeholder='Your email' type='email' value={email} onChange={(e)=>setEmail(e.target.value)}/>
+            <Button pl='10' pr='10' size='lg' colorScheme='primary' 
+            onClick={emailOptIn} isLoading={optInState===1} loadingText="Get notified"
+            leftIcon={optInState < 2 ? null : <Iconify icon='material-symbols:check'/>}
+            >{optInState < 2 ? "Get notified" : "Thanks!"}</Button>
+          </HStack>
+          <Text color="text.subtle"  fontSize='sm' >Or follow along <Link color='primary.500' href="https://twitter.com/jaketref">@jaketref</Link></Text>
+
           </VStack>
-        </Container>
-        <Container maxW='800' pb='100'>
-          <SimpleGrid columns={2} rows={1} spacing={10}>
-            <Card p='30'>
-              <VStack align='left' spacing={7}>
-              <VStack align='left' spacing={3}>
-                <Text fontSize='xl' fontWeight='bold'>Single</Text>
-                <Text fontSize='4xl' >$99</Text>
-                <Text fontSize='lg' >Best for your first launch</Text>
-              </VStack>
-              <VStack spacing={1} align='left'>
-                <HStack>
-                  <Iconify icon='material-symbols:check' color='green.400' size={30}/>
-                  <Text fontSize='lg' color="text.subtle">Password + Google Auth</Text>
-                </HStack>
-                <HStack>
-                  <Iconify icon='material-symbols:check' color='green.400' size={30}/>
-                  <Text fontSize='lg' color="text.subtle">User Roles and Orgs</Text>
-                </HStack>
-                <HStack>
-                  <Iconify icon='material-symbols:check' color='green.400' size={30}/>
-                  <Text fontSize='lg' color="text.subtle">Stripe Payments integration</Text>
-                </HStack>
-                <HStack>
-                  <Iconify icon='material-symbols:check' color='green.400' size={30}/>
-                  <Text fontSize='lg' color="text.subtle">Chakra UI Integration</Text>
-                </HStack>
-                <HStack>
-                  <Iconify icon='material-symbols:check' color='green.400' size={30}/>
-                  <Text fontSize='lg' color="text.subtle">Laravel Backend</Text>
-                </HStack>
-                <HStack>
-                  <Iconify icon='material-symbols:check' color='green.400' size={30}/>
-                  <Text fontSize='lg' color="text.subtle">Template Pages</Text>
-                </HStack>
-                <HStack>
-                  <Iconify icon='material-symbols:check' color='green.400' size={30}/>
-                  <Text fontSize='lg' color="text.subtle">Sendgrid Email Sending</Text>
-                </HStack>
-                <HStack>
-                  <Iconify icon='material-symbols:check' color='green.400' size={30}/>
-                  <Text fontSize='lg' color="text.subtle">React Frontend</Text>
-                </HStack>
-              </VStack>
-              <Button width='100%' colorScheme='primary'>Buy now</Button>
-              </VStack>
-            </Card>
-            <Card p='30'>
-              <VStack align='left' spacing={7}>
-              <VStack align='left' spacing={3}>
-                <Text fontSize='xl' fontWeight='bold'>Unlimited</Text>
-                <Text fontSize='4xl' >$299</Text>
-                <Text fontSize='lg' >Best for habitual hackers</Text>
-              </VStack>
-              <VStack spacing={1} align='left'>
-                <HStack>
-                  <Iconify icon='material-symbols:check' color='green.400' size={30}/>
-                  <Text fontSize='lg' color="text.subtle">Password + Google Auth</Text>
-                </HStack>
-                <HStack>
-                  <Iconify icon='material-symbols:check' color='green.400' size={30}/>
-                  <Text fontSize='lg' color="text.subtle">User Roles and Orgs</Text>
-                </HStack>
-                <HStack>
-                  <Iconify icon='material-symbols:check' color='green.400' size={30}/>
-                  <Text fontSize='lg' color="text.subtle">Stripe Payments integration</Text>
-                </HStack>
-                <HStack>
-                  <Iconify icon='material-symbols:check' color='green.400' size={30}/>
-                  <Text fontSize='lg' color="text.subtle">Chakra UI Integration</Text>
-                </HStack>
-                <HStack>
-                  <Iconify icon='material-symbols:check' color='green.400' size={30}/>
-                  <Text fontSize='lg' color="text.subtle">Laravel Backend</Text>
-                </HStack>
-                <HStack>
-                  <Iconify icon='material-symbols:check' color='green.400' size={30}/>
-                  <Text fontSize='lg' color="text.subtle">Template Pages</Text>
-                </HStack>
-                <HStack>
-                  <Iconify icon='material-symbols:check' color='green.400' size={30}/>
-                  <Text fontSize='lg' color="text.subtle">Sendgrid Email Sending</Text>
-                </HStack>
-                <HStack>
-                  <Iconify icon='material-symbols:check' color='green.400' size={30}/>
-                  <Text fontSize='lg' color="text.subtle">React Frontend</Text>
-                </HStack>
-              </VStack>
-              <Button width='100%' colorScheme='primary'>Buy now</Button>
-              </VStack>
-            </Card>
-            </SimpleGrid>
-        </Container>
-      </Box>
-      {/* Testimonials */}
-      <Container maxW={700} textAlign='center' pt='20' >
-      <Heading size='lg'>Loved by hackers like you ❤️</Heading>
-      </Container>
-      <Container maxW={1200} pt='20' pb='20'>
-        <SimpleGrid columns={3} rows={1} spacing={5}>
-          <VStack spacing={5} width='100%'>
-            <Card p='30' width='100%'>
-              <HStack spacing={3} align='top'>
-                <Avatar size='sm' name="John Belony" backgroundColor='bg.well'/>
-                <VStack spacing={3} align='left' textAlign='left'>
-                  <Text fontSize='lg'>John B <chakra.span fontSize='sm' color="text.subtle">May 15, 2023</chakra.span></Text>
-                  <Text fontSize='slgm'>Pro-tip: Stop building oAuth flows. Stop fussing with server setups. Please, stop using blade.<br/><br/>Just go buy @indiestack it's literally only $99, I use it on everything I do. It's how I'm able to pop off new MVPs in a weekend.</Text>
-                </VStack>
-              </HStack>
-            </Card>
-          
-            <Card p='30' width='100%'>
-              <HStack spacing={3} align='top'>
-                <Avatar size='sm' name="Sengal Fredriks" backgroundColor='bg.well'/>
-                <VStack spacing={3} align='left' textAlign='left'>
-                  <Text fontSize='lg'>Sengal F <chakra.span fontSize='sm' color="text.subtle">April 29, 2023</chakra.span></Text>
-                  <Text fontSize='slgm'>This a numbers game. 95% of the projects I've shipped made $0. You gotta have a good workflow and ship fast and often. Grab a boilerplate project. If you don't have one @indiestack is the go-to. Speed up your time to market by 100x - rinse, repeat. 🔥</Text>
-                </VStack>
-              </HStack>
-            </Card>
           </VStack>
-          <VStack spacing={5} width='100%'>
-            
-            <Card p='30' width='100%'>
-              <HStack spacing={3} align='top'>
-                <Avatar size='sm' name="Fredrik Ansel" backgroundColor='bg.well'/>
-                <VStack spacing={3} align='left' textAlign='left'>
-                  <Text fontSize='lg'>Fredrik A <chakra.span fontSize='sm' color="text.subtle">May 27, 2023</chakra.span></Text>
-                  <Text fontSize='slgm'>Oh my god I just tried @indiestack and I'm speachless 🥲<br/><br/>Why did I spend the last 5 years rebuilding auth and payment flows...</Text>
-                </VStack>
-              </HStack>
-            </Card>
-            <Card p='30' width='100%'>
-              <HStack spacing={3} align='top'>
-                <Avatar size='sm' name="John Belony" backgroundColor='bg.well'/>
-                <VStack spacing={3} align='left' textAlign='left'>
-                  <Text fontSize='lg'>John B <chakra.span fontSize='sm' color="text.subtle">May 15, 2023</chakra.span></Text>
-                  <Text fontSize='slgm'>robust synopsis for high level overviews. Organically grow the holistic world<br></br><br></br>Leverage agile frameworks to provide a robust synopsis for high level overviews. Organically grow the holistic world view of disruptive innovation via workplace diversity and empowerment.</Text>
-                </VStack>
-              </HStack>
-            </Card>
-          
-          </VStack>
-          <VStack spacing={5} width='100%'>
-            <Card p='30' width='100%'>
-              <HStack spacing={3} align='top'>
-                <Avatar size='sm' name="John Belony" backgroundColor='bg.well'/>
-                <VStack spacing={3} align='left' textAlign='left'>
-                  <Text fontSize='lg'>John B <chakra.span fontSize='sm' color="text.subtle">May 15, 2023</chakra.span></Text>
-                  <Text fontSize='slgm'>Leverage agile frameworks to provide a robust synopsis for high level overviews. Organically grow the holistic world view of disruptive innovation via workplace diversity and empowerment.</Text>
-                </VStack>
-              </HStack>
-            </Card>
-            <Card p='30' width='100%'>
-              <HStack spacing={3} align='top'>
-                <Avatar size='sm' name="John Belony" backgroundColor='bg.well'/>
-                <VStack spacing={3} align='left' textAlign='left'>
-                  <Text fontSize='lg'>John B <chakra.span fontSize='sm' color="text.subtle">May 15, 2023</chakra.span></Text>
-                  <Text fontSize='slgm'>Organically grow the holistic world view of disruptive innovation via workplace diversity and empowerment.</Text>
-                </VStack>
-              </HStack>
-            </Card>
-            
-          </VStack>
-        </SimpleGrid>
-      </Container>
-      {/* Footer */}
-      <Container maxW='300' pb='20'>
-        <Text color="text.subtle">Hacked together with ⚡️ in NYC</Text>
+          </Container>
+        </VStack>
       </Container>
     </Box>
   );

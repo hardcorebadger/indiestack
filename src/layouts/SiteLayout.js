@@ -9,9 +9,10 @@ import Logo from '../components/Logo';
 import { Link as RouterLink, useLocation } from "react-router-dom";
 
 export default function SiteLayout() {
+  const location = useLocation()
   return (
     <Box w='100%'> 
-    <Container minW={1200} pt={5}>
+    <Container maxW={1200} pt={5}>
       <HStack align='center' justify='space-between'>
         <RouterLink to='/' >
         <HStack align='center'>
@@ -21,7 +22,9 @@ export default function SiteLayout() {
         </RouterLink>
         <HStack align='center'>
           <ColorModeSwitcher/>
+          {location.pathname !== '/' &&
           <Button as={RouterLink} to='/auth/login' colorScheme='gray' size='sm'>Login</Button>
+          }
         </HStack>
       </HStack>
     </Container>
